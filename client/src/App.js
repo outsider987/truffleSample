@@ -113,10 +113,11 @@ const App = () => {
           setAccounts(accounts);
           const ethBalance = await web3Instance.eth.getBalance(accounts[accountIndex]);
 
-          // const balance = await metaCoinContract.methods
-          //   .getBalance(accounts[accountIndex])
-          //   .call();
+          const balance = await metaCoinContract.methods
+            .getBalance(accounts[accountIndex])
+            .call();
           setBalance(ethBalance);
+          setBalance(balance);
         } catch (error) {
           console.error("Error while connecting to MetaMask:", error);
         }
