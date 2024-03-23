@@ -35,10 +35,7 @@ solution("66644319333");
 console.log(solution("66644319333"));
 
 function checkPreviousNextSame(arr) {
-  for (let i = 0; i < arr.length - 1; i++) {
-    if (arr[i] === arr[i + 1]) {
-      return true;
-    }
-  }
-  return false;
+  return arr.slice(0, -1).some((v, i) => v === arr[i + 1]);
 }
+
+
