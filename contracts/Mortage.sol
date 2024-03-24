@@ -1,10 +1,11 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract MortgageContract {
     address public owner;
     address public thirdPartyPlatform;
     address public leader;
-    uint public owerUsdtAmount;
+    uint256 public owerUsdtAmount;
     uint public leaderUsdtAmount;
     bool public contractInitiated;
     bool public ownerAgreed;
@@ -54,69 +55,73 @@ contract MortgageContract {
         _;
     }
 
-    constructor(
-        address _owner,
-        address _thirdPartyPlatform,
-        address _leader,
-        uint _owerUsdtAmount,
-        string memory _requirement,
-        uint _expirationTime
-    ) {
-        owner = _owner;
-        thirdPartyPlatform = _thirdPartyPlatform;
-        leader = _leader;
-        owerUsdtAmount = _owerUsdtAmount;
-        leaderUsdtAmount = _owerUsdtAmount / 2;
-        requirement = _requirement;
+    constructor() {
+        thirdPartyPlatform = msg.sender;
+
         contractInitiated = false;
         ownerAgreed = false;
         leaderSigned = false;
         collateralTransferred = false;
-        expirationTime = _expirationTime;
     }
 
-    function initiateContract() external onlyThirdPartyPlatform {
+    function initiateContract(
+        address _owner,
+        string memory _requirement,
+        uint256 _owerUsdtAmount,
+        uint256 _expirationTime
+    ) external payable onlyThirdPartyPlatform returns (string memory) {
         require(!contractInitiated, "Contract has already been initiated");
+        // initiate contract var
+        requirement = _requirement;
+        expirationTime = _expirationTime;
+        owerUsdtAmount = _owerUsdtAmount;
+
+        owner = _owner;
 
         string memory descriptionOfrequirment = string(
             abi.encodePacked("reauirment is : ", requirement)
         );
-        string memory owerUsdtAmount = string(
+        string memory owerUsdtAmountStr = string(
             abi.encodePacked("usdt amount is : ", owerUsdtAmount)
         );
         string memory requirementAndAmount = string(
-            abi.encodePacked(descriptionOfrequirment, owerUsdtAmount)
+            abi.encodePacked(descriptionOfrequirment, owerUsdtAmountStr)
         );
 
         emit ContractInitiated(owner, thirdPartyPlatform, requirementAndAmount); // 發送通知給業主以及第三方平台
 
         contractInitiated = true;
+        return "initiate contract";
     }
 
     function transferCollateralToThridPartyPlatform(
-        bool _isOnwerAgreed
-    ) external onlyOwner {
+        bool _isOnwerAgreed,
+        address payable _thirdPartyPlatform
+    ) public payable returns (bool) {
         require(_isOnwerAgreed, "Onwer need granted access ");
+
         ownerAgreed = _isOnwerAgreed;
-        emit Transfer(owner, thirdPartyPlatform, owerUsdtAmount);
+        emit Transfer(msg.sender, _thirdPartyPlatform, msg.value);
 
-        thirdPartyPlatformBalance[thirdPartyPlatform] += owerUsdtAmount;
+        _thirdPartyPlatform.transfer(msg.value);
+        
 
-        ownerBalance[owner] -= owerUsdtAmount;
-
-        owerUsdtAmount = 0;
-
-        emit ContractApproved(owner, owerUsdtAmount);
+        emit ContractApproved(owner, msg.value);
+        return true;
     }
 
     function requestLeaderSignature(
-        bool _isLeaderAgreed
+        bool _isLeaderAgreed,
+        address _leader
     ) external onlyThirdPartyPlatform {
         require(ownerAgreed, "Owner has not agreed to the contract");
         require(!leaderSigned, "Leader has already signed");
         require(_isLeaderAgreed, "Leader need granted access ");
 
+        leader = _leader;
         leaderSigned = _isLeaderAgreed;
+        leaderUsdtAmount = owerUsdtAmount / 2;
+
         emit Escrowed(leader, owner);
 
         emit Transfer(leader, thirdPartyPlatform, leaderUsdtAmount);
@@ -124,7 +129,6 @@ contract MortgageContract {
         thirdPartyPlatformBalance[thirdPartyPlatform] += leaderUsdtAmount;
         leaderBalance[leader] -= leaderUsdtAmount;
 
-        leaderUsdtAmount = 0;
         emit Signed(leader);
     }
 }
