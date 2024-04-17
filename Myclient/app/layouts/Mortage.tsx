@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from "react";
 import { useWalletContext } from "../store/Wallet";
 import Web3 from "web3";
-import Button from "./Button";
+import Button from "../components/Button";
 import MortageABI from "../contracts/MortgageContract.json";
-import InitiateContract from "./InitialContract";
-import OwnerAgreed from "./OwnerAgreed";
+import InitiateContract from "../components/InitialContract";
+import OwnerAgreed from "../components/OwnerAgreed";
 import { Contract } from "web3";
 
 const Mortage = () => {
