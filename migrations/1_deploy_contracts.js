@@ -7,6 +7,6 @@ const MortgageContract = artifacts.require("MortgageContract");
 module.exports = function (deployer) {
   // deployer.deploy(ConvertLib);
   // deployer.link(ConvertLib, MetaCoin);
-  // deployer.deploy(MyToken, "MyToken", "MTK", 18);
-  deployer.deploy(MortgageContract);
+  deployer.deploy(MyToken, "MyToken", "MTK", 18);
+  //   deployer.deploy(MortgageContract);
 };

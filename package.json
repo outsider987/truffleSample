@@ -1,8 +1,18 @@
 {
   "dependencies": {
+    "@openzeppelin/test-environment": "^0.1.9",
     "openzeppelin-solidity": "^3.4.2"
   },
   "devDependencies": {
-    "truffle-hdwallet-provider": "^1.0.17"
+    "@typechain/truffle-v5": "^8.0.7",
+    "@types/chai": "^4.3.14",
+    "@types/jest": "^29.5.12",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.12.7",
+    "truffle": "^5.11.5",
+    "truffle-hdwallet-provider": "^1.0.17",
+    "ts-node": "^10.9.2",
+    "typechain": "^8.3.2",
+    "typescript": "^5.4.5"
   }
 }
